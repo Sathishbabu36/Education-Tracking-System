@@ -16,7 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "Ratings")
+@Table(name = "ratings")
 public class Rating {
 	@Id
 	@GenerateSequenceId

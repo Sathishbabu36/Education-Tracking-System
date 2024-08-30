@@ -1,19 +1,29 @@
 package com.project.ets.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.project.ets.entity.Admin;
 import com.project.ets.entity.HR;
+import com.project.ets.entity.Rating;
 import com.project.ets.entity.Student;
 import com.project.ets.entity.Trainer;
 import com.project.ets.entity.User;
+import com.project.ets.enums.Stack;
 import com.project.ets.enums.UserRole;
+import com.project.ets.exception.UserNotFoundByIdException;
+import com.project.ets.mapper.RatingMapper;
 import com.project.ets.mapper.UserMapper;
+import com.project.ets.repository.RatingRepository;
 import com.project.ets.repository.UserRepository;
 import com.project.ets.requestdto.RegisterationRequestDTO;
 import com.project.ets.requestdto.StudentRequestDTO;
 import com.project.ets.requestdto.TrainerRequestDTO;
 import com.project.ets.requestdto.UserRequestDTO;
+import com.project.ets.responsedto.RatingResponse;
+import com.project.ets.responsedto.StudentResponseDTO;
 import com.project.ets.responsedto.UserResponse;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +34,8 @@ public class UserService {
 	
 	private UserRepository userRepo;
 	private UserMapper userMapper;
+	private RatingRepository ratingRepository;
+	private RatingMapper ratingMapper;
 	
 	public UserResponse saveUser(RegisterationRequestDTO registerationRequestDTO,UserRole role) {
 		
@@ -47,28 +59,45 @@ public class UserService {
 		return userMapper.mapToUserResponse(user);
 	}
 	
-	public UserResponse updateUser(UserRequestDTO userRequestDTO, String userId,UserRole role) {
+	public UserResponse updateTrainer(TrainerRequestDTO trainerRequest,String userId) {
+		return userRepo.findById(userId).map((user)->{
+			user = userMapper.mapToTrainerEntity(trainerRequest, (Trainer) user);
+			user = userRepo.save(user);
+			return userMapper.mapToUserResponse(user);
+		}).orElseThrow(()-> new UserNotFoundByIdException("failed to update the trainer"));
+	}
+	
+	public StudentResponseDTO updateStudent(StudentRequestDTO studentRequest,String userId) {
+		return userRepo.findById(userId).map((user)->{
+			user=userMapper.mapToStudentEntity(studentRequest, (Student)user);
+			user=userRepo.save(user);
+			return userMapper.mapToStudentResponse((Student) user);
+		}).orElseThrow(()-> new UserNotFoundByIdException("failed to update student"));
+	}
+	
+	public StudentResponseDTO updateStudent(Stack stack, String userId) {
 		return userRepo.findById(userId)
-		.map((user) ->{
-				switch(role) {
-				case STUDENT:{
-					Student student = (Student) user;
-					StudentRequestDTO studentRequestDTO = (StudentRequestDTO) userRequestDTO;
-					student = userMapper.mapToStudentEntity(studentRequestDTO, student);
-					student = userRepo.save(student);
-					
-					return userMapper.mapToUserResponse(student);
-				}
-				case TRAINER:{
-					Trainer trainer = (Trainer) user;
-					TrainerRequestDTO trainerRequestDTO = (TrainerRequestDTO) userRequestDTO;
-					trainer = userMapper.mapToTrainerEntity(trainerRequestDTO, trainer);
-					trainer = userRepo.save(trainer);
-					
-					return userMapper.mapToUserResponse(trainer);
-				}
-				default: return null;
-			}
-		}).orElseThrow(()-> new IllegalArgumentException("Unexpected value: "+role));
+		.map(user ->{
+			Student student = (Student) user;
+			stack.getSubjects().forEach(subject -> {
+				Rating rating = new Rating();
+				rating.setSubject(subject);
+				ratingRepository.save(rating);
+			});
+			student.setStack(stack);
+			user = userRepo.save(student);
+			return userMapper.mapToStudentResponse(student);
+		}).orElseThrow(()-> new UserNotFoundByIdException("failed to update stack to the student"));
+	}
+	
+	public List<RatingResponse> viewRating(String userId){
+		return userRepo.findById(userId).map(user ->{
+			Student student = (Student) user;
+			List<RatingResponse> response = new ArrayList<RatingResponse>();
+			student.getRatings().forEach(rating ->{
+				response.add(ratingMapper.mapToRatingReponse(rating));
+			});
+			return response;
+		}).orElseThrow(()-> new UserNotFoundByIdException("student is not found by the given id"));
 	}
 }

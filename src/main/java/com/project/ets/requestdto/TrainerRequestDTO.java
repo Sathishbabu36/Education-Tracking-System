@@ -18,5 +18,6 @@ public class TrainerRequestDTO extends UserRequestDTO{
 	@NotNull(message = "subjects list cannot be null")
 	@NotEmpty(message = "subjects list cannot be empty")
 	@Enumerated(EnumType.STRING)
-	private List<@NotNull(message = "subject cannot be null") Subject> subjects;
+	private List<Subject> subjects;
+	
 }
