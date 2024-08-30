@@ -1,31 +1,17 @@
 package com.project.ets.util;
 
-public class ErrorStructure {
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
+public class ErrorStructure<T> {
 	private int status;
 	private String message;
-	private String rootCause;
+	private T rootCause;
 
-	public int getStatus() {
-		return status;
-	}
-	public void setStatus(int status) {
-		this.status = status;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	public String getRootCause() {
-		return rootCause;
-	}
-	public void setRootCause(String rootCause) {
-		this.rootCause = rootCause;
-	}
-
-	public static ErrorStructure create(int status,String message,String rootCause) {
-		ErrorStructure error = new ErrorStructure();
+	public static <T>ErrorStructure<T> create(int status,String message,T rootCause) {
+		ErrorStructure<T> error = new ErrorStructure<T>();
 		error.setStatus(status);
 		error.setMessage(message);
 		error.setRootCause(rootCause);

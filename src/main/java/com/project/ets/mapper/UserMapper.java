@@ -16,7 +16,7 @@ import com.project.ets.responsedto.UserResponse;
 public class UserMapper {
 	
 	public User mapToUserEntity(RegisterationRequestDTO registerationRequestDTO,User user) {
-		user.setUserName(registerationRequestDTO.getUserName());
+		user.setUserName(registerationRequestDTO.getUsername());
 		user.setEmail(registerationRequestDTO.getEmail());
 		user.setPassword(registerationRequestDTO.getPassword());
 		return user;

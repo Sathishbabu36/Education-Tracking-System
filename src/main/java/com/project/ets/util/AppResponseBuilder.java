@@ -1,5 +1,7 @@
 package com.project.ets.util;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -13,9 +15,13 @@ public class AppResponseBuilder {
 				.body(ResponseStructure.create(status.value(), message, data));
 	}
 
-	public ResponseEntity<ErrorStructure> create(HttpStatus status,String message, String rootCause){
+	public ResponseEntity<ErrorStructure<String>> error(HttpStatus status,String message, String rootCause){
 		return ResponseEntity
 				.status(status)
 				.body(ErrorStructure.create(status.value(), message, rootCause));
+	}
+	
+	public ResponseEntity<Object> fieldErrors(HttpStatus status, String message, List<CustomFieldError> errors){
+		return ResponseEntity.status(status).body(ErrorStructure.create(status.value(), message, errors));
 	}
 }
