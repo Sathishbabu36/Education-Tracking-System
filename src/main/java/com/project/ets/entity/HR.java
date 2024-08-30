@@ -7,8 +7,8 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "super_admins")
+@Table(name = "hrs")
 @EntityListeners(AuditingEntityListener.class)
-public class Super_Admin extends User{
-	
+public class HR extends User{
+
 }
