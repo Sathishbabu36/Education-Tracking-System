@@ -23,7 +23,7 @@ public class SuperAdminRegisterationEvent {
 	private UserRepository userRepo;
 	
 	@Value("${super_admin.email}")
-	private String email;
+	private String superAdminEmail;
 	
 	public SuperAdminRegisterationEvent(UserRepository userRepo) {
 		super();
@@ -32,20 +32,20 @@ public class SuperAdminRegisterationEvent {
 
 
 
-	@EventListener(ApplicationReadyEvent.class)
+	@EventListener(classes = ApplicationReadyEvent.class)
 	public void registerSuperAdmin() {
-		log.info("checking if super_admin is present");
-		List<User> list= userRepo.findByRole(UserRole.SUPER_ADMIN);
-		if(list.isEmpty()) {
+		log.info("checking if super admin is present");
+		List<User> superAdmins= userRepo.findByRole(UserRole.SUPER_ADMIN);
+		if(superAdmins.isEmpty()) {
 			log.info("super admin is not present creating one");
 			User user = new Super_Admin();
-			user.setEmail(email);
+			user.setEmail(superAdminEmail);
 			user.setPassword(UUID.randomUUID().toString());
 			user.setRole(UserRole.SUPER_ADMIN);
 			user.setUserName("admin");
 			userRepo.save(user);
 		}
 		else
-			log.info("super admin present with email: "+list.get(0).getEmail());
+			log.info("super admin present with email: "+superAdmins.get(0).getEmail());
 	}
 }
