@@ -1,0 +1,22 @@
+spring:
+	application:
+		name: Edu-Tracking-System
+		
+#Databse Configuration
+	datasource:
+		url: jdbc:mysql://localhost:3306/ets_db?createDatabseIfNotExist=true
+		username: root
+		password: root
+		driver-class-name: com.mysql.cj.jdbc.Driver
+		
+	jpa:
+		hibernate:
+			ddl-auto: update
+		show-sql: true
+		properties:
+			hibernate:
+				format_sql: true
+				
+#Application properties
+super_admin:
+	email:${super-admin.email}
