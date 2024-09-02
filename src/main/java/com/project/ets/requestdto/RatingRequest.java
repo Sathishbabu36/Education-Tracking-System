@@ -1,5 +1,6 @@
 package com.project.ets.requestdto;
 
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -14,5 +15,5 @@ public class RatingRequest {
 	private int rating;
 	@NotNull
 	private String feedback;
-
+    
 }

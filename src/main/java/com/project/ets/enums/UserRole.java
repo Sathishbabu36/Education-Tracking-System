@@ -26,7 +26,7 @@ public enum UserRole {
 		this.privileges = privileges;
 	}
 
-    private List<Privilege> getPrivileges(){
+	private List<Privilege> getPrivileges(){
     	return privileges;
     }
 
